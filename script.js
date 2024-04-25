@@ -1,30 +1,30 @@
-const cyrillicMap = {
-    a: 'а',
-    b: 'б',
-    c: 'ц',
-    d: 'д',
-    e: 'е',
-    f: 'ф',
-    g: 'г',
-    h: 'х',
-    i: 'и',
-    j: 'й',
-    k: 'к',
-    l: 'л',
-    m: 'м',
-    n: 'н',
-    o: 'о',
-    p: 'п',
-    q: 'я',
-    r: 'р',
-    s: 'с',
-    t: 'т',
-    u: 'у',
-    v: 'в',
-    w: 'ш',
-    x: 'ж',
-    y: 'ы',
-    z: 'з',
+const hangulMap = {
+    q: 'ㅂ',
+    w: 'ㅈ',
+    e: 'ㄷ',
+    r: 'ㄱ',
+    t: 'ㅅ',
+    y: 'ㅛ',
+    u: 'ㅕ',
+    i: 'ㅑ',
+    o: 'ㅐ',
+    p: 'ㅔ',
+    a: 'ㅁ',
+    s: 'ㄴ',
+    d: 'ㅇ',
+    f: 'ㄹ',
+    g: 'ㅎ',
+    h: 'ㅗ',
+    j: 'ㅓ',
+    k: 'ㅏ',
+    l: 'ㅣ',
+    z: 'ㅋ',
+    x: 'ㅌ',
+    c: 'ㅊ',
+    v: 'ㅍ',
+    b: 'ㅠ',
+    n: 'ㅜ',
+    m: 'ㅡ',
   };
   
   document.getElementById('input').addEventListener('input', function() {
@@ -33,7 +33,7 @@ const cyrillicMap = {
     
     for (let i = 0; i < inputText.length; i++) {
       const char = inputText[i].toLowerCase();
-      outputText += cyrillicMap[char] || inputText[i];
+      outputText += hangulMap[char] || inputText[i];
     }
     
     this.value = outputText;
