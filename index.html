@@ -23,15 +23,16 @@
 <input type="text" id="hangulInput" placeholder="Hangul output..." readonly>
 
 <script>
-// Jamo-to-syllable mapping function
-function composeHangulSyllable(initial, medial, final) {
-    return String.fromCharCode((initial * 588) + (medial * 28) + final + 44032);
-}
-
 // Hangul jamo ranges
 const initialJamos = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
 const medialJamos = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
 const finalJamos = [' ', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+// Function to compose a Hangul syllable based on initial, medial, and final jamos
+function composeHangulSyllable(initial, medial, final) {
+    const syllable = (initialJamos.indexOf(initial) * 21 * 28) + (medialJamos.indexOf(medial) * 28) + finalJamos.indexOf(final) + 44032;
+    return String.fromCharCode(syllable);
+}
 
 let jamoBuffer = ''; // Buffer to store entered jamos
 
@@ -49,92 +50,7 @@ document.getElementById('englishInput').addEventListener('input', function() {
 document.addEventListener('keydown', function(event) {
     if (event.key === ' ') {
         // Spacebar pressed, compose the syllable
-        const syllable = composeHangulSyllable(...jamoBuffer.split('').map(jamo => {
-            switch (jamo) {
-                case 'ㄱ':
-                    return 0;
-                case 'ㄲ':
-                    return 1;
-                case 'ㄴ':
-                    return 2;
-                case 'ㄷ':
-                    return 3;
-                case 'ㄸ':
-                    return 4;
-                case 'ㄹ':
-                    return 5;
-                case 'ㅁ':
-                    return 6;
-                case 'ㅂ':
-                    return 7;
-                case 'ㅃ':
-                    return 8;
-                case 'ㅅ':
-                    return 9;
-                case 'ㅆ':
-                    return 10;
-                case 'ㅇ':
-                    return 11;
-                case 'ㅈ':
-                    return 12;
-                case 'ㅉ':
-                    return 13;
-                case 'ㅊ':
-                    return 14;
-                case 'ㅋ':
-                    return 15;
-                case 'ㅌ':
-                    return 16;
-                case 'ㅍ':
-                    return 17;
-                case 'ㅎ':
-                    return 18;
-                case 'ㅏ':
-                    return 0;
-                case 'ㅐ':
-                    return 1;
-                case 'ㅑ':
-                    return 2;
-                case 'ㅒ':
-                    return 3;
-                case 'ㅓ':
-                    return 4;
-                case 'ㅔ':
-                    return 5;
-                case 'ㅕ':
-                    return 6;
-                case 'ㅖ':
-                    return 7;
-                case 'ㅗ':
-                    return 8;
-                case 'ㅘ':
-                    return 9;
-                case 'ㅙ':
-                    return 10;
-                case 'ㅚ':
-                    return 11;
-                case 'ㅛ':
-                    return 12;
-                case 'ㅜ':
-                    return 13;
-                case 'ㅝ':
-                    return 14;
-                case 'ㅞ':
-                    return 15;
-                case 'ㅟ':
-                    return 16;
-                case 'ㅠ':
-                    return 17;
-                case 'ㅡ':
-                    return 18;
-                case 'ㅢ':
-                    return 19;
-                case 'ㅣ':
-                    return 20;
-                default:
-                    return 0; // Use default value for space
-            }
-        }));
+        const syllable = composeHangulSyllable(...jamoBuffer.split(''));
         document.getElementById('hangulInput').value += syllable;
         jamoBuffer = ''; // Clear the buffer
     } else {
