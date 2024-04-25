@@ -3,13 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hangul Typing Interface</title>
-<link rel="stylesheet" href="styles.css">
+<title>English to Hangul Typing</title>
+<style>
+    #englishInput {
+        width: 300px;
+        padding: 10px;
+        font-size: 16px;
+    }
+    #hangulInput {
+        width: 300px;
+        padding: 10px;
+        font-size: 16px;
+    }
+</style>
 </head>
 <body>
-<div class="container">
-  <textarea id="input" placeholder="Type using your English keyboard..."></textarea>
-</div>
-<script src="script.js"></script>
+
+<input type="text" id="englishInput" placeholder="Type in English...">
+<input type="text" id="hangulInput" placeholder="Hangul output..." readonly>
+
+<script>
+// Jamo-to-syllable mapping function
+function composeHangulSyllable(initial, medial, final) {
+    return String.fromCharCode((initial * 588) + (medial * 28) + final + 44032);
+}
+
+// Hangul jamo ranges
+const initialJamos = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+const medialJamos = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+const finalJamos = [' ', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+let jamoBuffer = ''; // Buffer to store entered jamos
+
+document.getElementById('englishInput').addEventListener('input', function() {
+    const englishInput = this.value.toLowerCase();
+    let hangulOutput = '';
+    for (let i = 0; i < englishInput.length; i++) {
+        const char = englishInput[i];
+        // If the character exists in hangulMap, append the corresponding Hangul character
+        hangulOutput += hangulMap[char] || char;
+    }
+    document.getElementById('hangulInput').value = hangulOutput;
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === ' ') {
+        // Spacebar pressed, compose the syllable
+        const syllable = composeHangulSyllable(...jamoBuffer.split('').map(jamo => {
+            switch (jamo) {
+                case 'ㄱ':
+                    return 0;
+                case 'ㄲ':
+                    return 1;
+                case 'ㄴ':
+                    return 2;
+                case 'ㄷ':
+                    return 3;
+                case 'ㄸ':
+                    return 4;
+                case 'ㄹ':
+                    return 5;
+                case 'ㅁ':
+                    return 6;
+                case 'ㅂ':
+                    return 7;
+                case 'ㅃ':
+                    return 8;
+                case 'ㅅ':
+                    return 9;
+                case 'ㅆ':
+                    return 10;
+                case 'ㅇ':
+                    return 11;
+                case 'ㅈ':
+                    return 12;
+                case 'ㅉ':
+                    return 13;
+                case 'ㅊ':
+                    return 14;
+                case 'ㅋ':
+                    return 15;
+                case 'ㅌ':
+                    return 16;
+                case 'ㅍ':
+                    return 17;
+                case 'ㅎ':
+                    return 18;
+                case 'ㅏ':
+                    return 0;
+                case 'ㅐ':
+                    return 1;
+                case 'ㅑ':
+                    return 2;
+                case 'ㅒ':
+                    return 3;
+                case 'ㅓ':
+                    return 4;
+                case 'ㅔ':
+                    return 5;
+                case 'ㅕ':
+                    return 6;
+                case 'ㅖ':
+                    return 7;
+                case 'ㅗ':
+                    return 8;
+                case 'ㅘ':
+                    return 9;
+                case 'ㅙ':
+                    return 10;
+                case 'ㅚ':
+                    return 11;
+                case 'ㅛ':
+                    return 12;
+                case 'ㅜ':
+                    return 13;
+                case 'ㅝ':
+                    return 14;
+                case 'ㅞ':
+                    return 15;
+                case 'ㅟ':
+                    return 16;
+                case 'ㅠ':
+                    return 17;
+                case 'ㅡ':
+                    return 18;
+                case 'ㅢ':
+                    return 19;
+                case 'ㅣ':
+                    return 20;
+                default:
+                    return 0; // Use default value for space
+            }
+        }));
+        document.getElementById('hangulInput').value += syllable;
+        jamoBuffer = ''; // Clear the buffer
+    } else {
+        // Add the pressed jamo to the buffer
+        if (initialJamos.includes(event.key) || medialJamos.includes(event.key) || finalJamos.includes(event.key)) {
+            jamoBuffer += event.key;
+        }
+    }
+});
+</script>
+
 </body>
 </html>
