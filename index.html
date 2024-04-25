@@ -3,78 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English to Hangul Typing</title>
+<title>Latin to Hangul Conversion</title>
 <style>
-    #englishInput, #hangulInput {
+    #inputField {
         width: 300px;
         padding: 10px;
         font-size: 16px;
     }
-    #hangulInput {
-        margin-top: 8px;
-        background: #f0f0f0;
+    #outputField {
+        width: 300px;
+        padding: 10px;
+        font-size: 16px;
     }
 </style>
 </head>
 <body>
 
-<input type="text" id="englishInput" placeholder="Type in English...">
-<input type="text" id="hangulInput" placeholder="Hangul output..." readonly>
+<input type="text" id="inputField" placeholder="Type Latin characters...">
+<input type="text" id="outputField" placeholder="Hangul output..." readonly>
 
 <script>
-function composeHangulSyllable(initial, medial, final) {
-    if (initial < 0 || medial < 0) return ''; // Failsafe for incomplete input
-    if (final < 0) final = 0; // Handle non-final entries
-    return String.fromCharCode((initial * 588) + (medial * 28) + final + 44032);
-}
+// Hangul Jamo lists
+const initialJamos = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+const medialJamos = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+const finalJamos = [' ', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
 
-// Romanization to Jamo mappings (simplified for example purposes)
-const romToJamoMap = {
-    'g': 'ㄱ', 'kk': 'ㄲ', 'n': 'ㄴ', 'd': 'ㄷ', 'tt': 'ㄸ', 'l': 'ㄹ', 'm': 'ㅁ', 'b': 'ㅂ', 'pp': 'ㅃ',
-    's': 'ㅅ', 'ss': 'ㅆ', 'ng': 'ㅇ', 'j': 'ㅈ', 'jj': 'ㅉ', 'ch': 'ㅊ', 'k': 'ㅋ', 't': 'ㅌ', 'p': 'ㅍ', 'h': 'ㅎ',
-    'a': 'ㅏ', 'ae': 'ㅐ', 'ya': 'ㅑ', 'yae': 'ㅒ', 'eo': 'ㅓ', 'e': 'ㅔ', 'yeo': 'ㅕ', 'ye': 'ㅖ',
-    'o': 'ㅗ', 'wa': 'ㅘ', 'wae': 'ㅙ', 'oe': 'ㅚ', 'yo': 'ㅛ',
-    'u': 'ㅜ', 'wo': 'ㅝ', 'we': 'ㅞ', 'wi': 'ㅟ', 'yu': 'ㅠ', 'eu': 'ㅡ', 'ui': 'ㅢ', 'i': 'ㅣ'
+// Mapping of Latin characters to Hangul Jamos
+const latinToJamo = {
+    'G': 'ㄱ', 'K': 'ㄱ', 'N': 'ㄴ', 'D': 'ㄷ', 'L': 'ㄹ', 'M': 'ㅁ', 'B': 'ㅂ', 'S': 'ㅅ', 'J': 'ㅈ', 'C': 'ㅊ',
+    'A': 'ㅏ', 'E': 'ㅔ', 'Y': 'ㅖ', 'O': 'ㅗ', 'U': 'ㅜ', 'W': 'ㅝ', 'I': 'ㅣ', 'H': 'ㅎ'
 };
 
-document.getElementById('englishInput').addEventListener('input', function() {
-    const englishInput = this.value.toLowerCase();
-    let hangulOutput = '';
-    let buffer = '';
-    for (let char of englishInput) {
-        if (char.match(/[a-z]/)) {
-            buffer += char;
-            if (romToJamoMap[buffer]) {
-                hangulOutput += romToJamoMap[buffer];
-                buffer = '';
+document.getElementById('inputField').addEventListener('input', function() {
+    const inputString = this.value.toUpperCase();
+    let outputString = '';
+    let currentHangul = '';
+    let lastChar = '';
+    for (let char of inputString) {
+        if (char === ' ') {
+            // Convert currentHangul to Hangul integer
+            let result = 44032;
+            if (currentHangul.length === 3) {
+                result += (initialJamos.indexOf(currentHangul[0]) * 21 * 28) + (medialJamos.indexOf(currentHangul[1]) * 28) + (finalJamos.indexOf(currentHangul[2]));
             }
-        } else if (char === ' ') {
-            // Space indicates finalizing the current buffer as a syllable
-            document.getElementById('hangulInput').value += hangulOutput;
-            hangulOutput = '';
-        } else {
-            buffer = ''; // Reset for non-match
+            outputString += String.fromCharCode(result);
+            currentHangul = '';
+            lastChar = '';
+        } else if (latinToJamo[char]) {
+            if (lastChar === ' ') {
+                currentHangul += ' '; // Add space to separate syllables
+            }
+            currentHangul += latinToJamo[char];
+            lastChar = char;
         }
     }
-    this.value = buffer; // retain incomplete buffer in input
-});
-
-document.getElementById('englishInput').addEventListener('keydown', function(event) {
-    if (event.key === ' ') {
-        event.preventDefault(); // Prevent space from being added
-        let jamos = document.getElementById('hangulInput').value;
-        if (jamos.length >= 2) {
-            // Assuming a very basic extraction of initial, medial, and possibly final
-            const initialIdx = 0;
-            const medialIdx = 1;
-            const finalIdx = 2;
-            let initial = initialIdx < jamos.length ? initialJamos.indexOf(jamos[initialIdx]) : -1;
-            let medial = medialIdx < jamos.length ? medialJamos.indexOf(jamos[medialIdx]) : -1;
-            let final = finalIdx < jamos.length ? finalJamos.indexOf(jamos[finalIdx]) : -1;
-            const syllable = composeHangulSyllable(initial, medial, final);
-            document.getElementById('hangulInput').value = syllable;
-        }
-    }
+    document.getElementById('outputField').value = outputString;
 });
 </script>
 
